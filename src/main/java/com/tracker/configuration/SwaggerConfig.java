@@ -15,8 +15,8 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI openAPI() {
-        return new OpenAPI().info(new Info().title("Security Dashboard Next Gen")
-                        .description("This is security dashboard 2.0")
-                        .contact(new Contact().name("Pawan Saini").email("pawan.saini@moveinsync.com")));
+        return new OpenAPI().info(new Info().title("Job Tracker")
+                        .description("Easy way to track your Job Applications")
+                        .contact(new Contact().name("Pawan Saini").email("imRajAryan09@gmail.com")));
     }
 }

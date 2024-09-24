@@ -29,6 +29,7 @@ public class AsyncConfiguration implements AsyncConfigurer {
     @Override
     @Bean("asyncExecutor")
     public Executor getAsyncExecutor() {
+        log.info("Creating Async Executor with core pool size: {} and max pool size: {}", aeCorePoolSize, aeMaxPoolSize);
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(aeCorePoolSize);
         executor.setMaxPoolSize(aeMaxPoolSize);
