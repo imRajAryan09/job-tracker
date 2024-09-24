@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="true">
+    <property name="LOG_HOME" value="/mnt/local/deploy/tracker/logs" />
+
+    <springProfile name="local">
+        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+            </layout>
+        </appender>
+        <root level="INFO">
+            <appender-ref ref="STDOUT" />
+        </root>
+    </springProfile>
+
+    <springProfile name="prod">
+        <appender name="FILE-AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <append>true</append>
+            <file>${LOG_HOME}/tracker.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!-- daily rollover -->
+                <fileNamePattern>${LOG_HOME}/archived/tracker-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+                <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <maxFileSize>2000MB</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+            </rollingPolicy>
+            <encoder>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            </encoder>
+        </appender>
+        <root level="INFO">
+            <appender-ref ref="FILE-AUDIT" />
+        </root>
+    </springProfile>
+
+
+    <springProfile name="qa">
+        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+            </layout>
+        </appender>
+        <appender name="FILE-AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <append>true</append>
+            <file>${LOG_HOME}/tracker.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!-- daily rollover -->
+                <fileNamePattern>${LOG_HOME}/archived/tracker-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+                <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <maxFileSize>2000MB</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+            </rollingPolicy>
+            <encoder>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            </encoder>
+        </appender>
+        <root level="INFO">
+            <appender-ref ref="STDOUT" />
+            <appender-ref ref="FILE-AUDIT" />
+        </root>
+    </springProfile>
+
+    <springProfile name="uat">
+        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+            </layout>
+        </appender>
+        <appender name="FILE-AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <append>true</append>
+            <file>${LOG_HOME}/tracker.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!-- daily rollover -->
+                <fileNamePattern>${LOG_HOME}/archived/tracker-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+                <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <maxFileSize>2000MB</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+            </rollingPolicy>
+            <encoder>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            </encoder>
+        </appender>
+        <root level="INFO">
+            <appender-ref ref="STDOUT" />
+            <appender-ref ref="FILE-AUDIT" />
+        </root>
+    </springProfile>
+
+
+    <springProfile name="dev">
+        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+            </layout>
+        </appender>
+        <appender name="FILE-AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <append>true</append>
+            <file>${LOG_HOME}/tracker.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!-- daily rollover -->
+                <fileNamePattern>${LOG_HOME}/archived/tracker-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+                <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <maxFileSize>2000MB</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+            </rollingPolicy>
+            <encoder>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            </encoder>
+        </appender>
+        <root level="INFO">
+            <appender-ref ref="STDOUT" />
+            <appender-ref ref="FILE-AUDIT" />
+        </root>
+    </springProfile>
+
+</configuration>
