@@ -35,11 +35,11 @@ public class MetricInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, @NonNull Object handler, Exception ex) {
         long executionStartTime = (long) request.getAttribute(AppConstant.Metric.EXECUTION_START_TIME);
-        long executionTotalTime = Instant.now().toEpochMilli() - executionStartTime;
+        double executionTime = (Instant.now().toEpochMilli() - executionStartTime) / 1000D;
         String httpStatusCode = String.valueOf(response.getStatus());
         ThreadContext.put(AppConstant.Metric.HTTP_STATUS_CODE, httpStatusCode);
-        ThreadContext.put(AppConstant.Metric.EXECUTION_TOTAL_TIME, String.valueOf(executionTotalTime));
-        log.info("Completed Request :: httpMethod:{}, requestUri:{}, queryParams:{}, httpStatusCode:{} and executionTime:{} ms", request.getMethod(), request.getRequestURI(), request.getQueryString(), httpStatusCode, executionTotalTime);
+        ThreadContext.put(AppConstant.Metric.EXECUTION_TOTAL_TIME, String.valueOf(executionTime));
+        log.info("Completed Request :: httpMethod: {}, requestUri: {}, queryParams: {}, httpStatusCode:{} and executionTime: {}s", request.getMethod(), request.getRequestURI(), request.getQueryString(), httpStatusCode, executionTime);
 
         ThreadContext.clearAll();
     }
