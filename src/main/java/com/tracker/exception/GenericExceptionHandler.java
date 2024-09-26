@@ -19,6 +19,7 @@ import java.util.Collections;
 @Slf4j
 @RestControllerAdvice
 public class GenericExceptionHandler extends ResponseEntityExceptionHandler {
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<FailureResponse<Object>> handleInternalException(Exception exception) {
         ExceptionType exceptionType = ExceptionType.INTERNAL_SERVER_EXCEPTION;
