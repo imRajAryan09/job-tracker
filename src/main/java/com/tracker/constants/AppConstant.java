@@ -28,4 +28,11 @@ public class AppConstant {
         public static final String AUTHORIZATION = "Authorization";
 
     }
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Jwt {
+        public static final String ISSUER = "job-tracker";
+        public static final String SCOPE = "scope";
+        public static final String REFRESH_TOKEN = "REFRESH_TOKEN";
+    }
 }

@@ -1,6 +1,6 @@
 package com.tracker.controller;
 
-import com.tracker.constants.ApiEndPointConstant;
+import com.tracker.constants.ApiEndPoint;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +23,7 @@ public class TestController {
     private String branch;
 
 
-    @GetMapping(value = ApiEndPointConstant.PING)
+    @GetMapping(value = ApiEndPoint.PING)
     public ResponseEntity<String> homePage() {
         var message = String.format(
                 "<div style=\"display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; text-align: center;\">"
