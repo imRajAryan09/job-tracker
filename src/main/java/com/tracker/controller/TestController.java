@@ -16,11 +16,6 @@ public class TestController {
     @Value("${spring.application.name}")
     private String appName;
 
-    @Value("${git.commit.id.full}")
-    private String commitId;
-
-    @Value("${git.branch}")
-    private String branch;
 
 
     @GetMapping(value = ApiEndPoint.PING)
@@ -30,11 +25,11 @@ public class TestController {
                         + "<div>"
                         + "<h1 style=\"font-size: 2.5em;\">Hello World!</h1>"
                         + "<pre style=\"font-size: 1.5em; word-wrap: break-word; white-space: pre-wrap;\">"
-                        + "This is %s. <br>Branch: %s <br>CommitId: %s"
+                        + "Welcome to %s"
                         + "</pre>"
                         + "</div>"
                         + "</div>",
-                appName, branch, commitId);
+                appName);
         return ResponseEntity.ok(message);
     }
 }

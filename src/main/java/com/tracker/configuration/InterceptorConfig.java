@@ -21,7 +21,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class InterceptorConfig implements WebMvcConfigurer {
 
-    @Value("${application.name}")
+    @Value("${spring.application.name}")
     private String appName;
 
     private final MetricInterceptor metricInterceptor;
