@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -33,6 +34,7 @@ import java.io.IOException;
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class JwtRefreshTokenFilter extends OncePerRequestFilter {
 
     private final RSAKeyRecord rsaKeyRecord;
@@ -40,15 +42,6 @@ public class JwtRefreshTokenFilter extends OncePerRequestFilter {
     private final JwtTokenUtils jwtTokenUtils;
 
     private final RefreshTokenRepository refreshTokenRepository;
-
-    @Autowired
-    public JwtRefreshTokenFilter(RSAKeyRecord rsaKeyRecord,
-                                 JwtTokenUtils jwtTokenUtils,
-                                 RefreshTokenRepository refreshTokenRepository) {
-        this.rsaKeyRecord = rsaKeyRecord;
-        this.jwtTokenUtils = jwtTokenUtils;
-        this.refreshTokenRepository = refreshTokenRepository;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {

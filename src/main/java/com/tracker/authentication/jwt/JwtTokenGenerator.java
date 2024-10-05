@@ -3,6 +3,7 @@ package com.tracker.authentication.jwt;
 import com.tracker.constants.AppConstant;
 import com.tracker.enums.Permission;
 import com.tracker.enums.Role;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class JwtTokenGenerator {
 
     @Value("${jwt.access.token.expiry.minutes}")
@@ -36,11 +38,6 @@ public class JwtTokenGenerator {
     private int refreshTokenExpiryDays;
 
     private final JwtEncoder jwtEncoder;
-
-    @Autowired
-    public JwtTokenGenerator(JwtEncoder jwtEncoder) {
-        this.jwtEncoder = jwtEncoder;
-    }
 
     public String generateAccessToken(Authentication authentication) {
 

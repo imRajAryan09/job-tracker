@@ -3,6 +3,7 @@ package com.tracker.configuration;
 import com.tracker.interceptor.MetricInterceptor;
 import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.MeterRegistry;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
@@ -19,17 +20,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 
 @Configuration
+@RequiredArgsConstructor
 public class InterceptorConfig implements WebMvcConfigurer {
 
     @Value("${spring.application.name}")
     private String appName;
 
     private final MetricInterceptor metricInterceptor;
-
-    @Autowired
-    public InterceptorConfig(MetricInterceptor metricInterceptor) {
-        this.metricInterceptor = metricInterceptor;
-    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -47,10 +44,4 @@ public class InterceptorConfig implements WebMvcConfigurer {
         return new TimedAspect(registry);
     }
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("*")
-                .allowedOrigins("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE");
-    }
 }

@@ -7,6 +7,7 @@ import com.tracker.dto.response.AuthResponseDto;
 import com.tracker.dto.response.SuccessResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -29,15 +30,11 @@ import java.util.List;
  */
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(ApiEndPoint.Authentication.BASE)
 public class UserAuthenticationController {
 
     private final UserAuthService userAuthService;
-
-    @Autowired
-    public UserAuthenticationController(UserAuthService userAuthService) {
-        this.userAuthService = userAuthService;
-    }
 
     @PostMapping(ApiEndPoint.Authentication.SIGN_IN)
     public SuccessResponse<AuthResponseDto> authenticateUser(Authentication authentication, HttpServletResponse response) {

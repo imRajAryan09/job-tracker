@@ -2,6 +2,7 @@ package com.tracker.authentication.jwt;
 
 import com.tracker.authentication.user.UserInfo;
 import com.tracker.repository.UserInfoRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,15 +17,10 @@ import java.util.Objects;
  * created on 27/09/2024
  */
 @Component
+@RequiredArgsConstructor
 public class JwtTokenUtils {
 
     private final UserInfoRepository useruserInfoRepo;
-
-    @Autowired
-    public JwtTokenUtils(UserInfoRepository useruserInfoRepo) {
-        this.useruserInfoRepo = useruserInfoRepo;
-    }
-
 
     public String getUserName(Jwt jwtToken) {
         return jwtToken.getSubject();

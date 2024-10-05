@@ -10,6 +10,7 @@ import com.tracker.repository.RefreshTokenRepository;
 import com.tracker.repository.UserInfoRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -30,6 +31,7 @@ import java.util.Optional;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserAuthService {
 
     private final RefreshTokenRepository refreshTokenRepository;
@@ -40,16 +42,6 @@ public class UserAuthService {
 
     private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    public UserAuthService(RefreshTokenRepository refreshTokenRepository,
-                           UserInfoRepository userInfoRepository,
-                           JwtTokenGenerator jwtTokenGenerator,
-                           PasswordEncoder passwordEncoder) {
-        this.refreshTokenRepository = refreshTokenRepository;
-        this.userInfoRepository = userInfoRepository;
-        this.jwtTokenGenerator = jwtTokenGenerator;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     public AuthResponseDto getJwtTokensAfterAuthentication(Authentication authentication, HttpServletResponse response) {
         try {
