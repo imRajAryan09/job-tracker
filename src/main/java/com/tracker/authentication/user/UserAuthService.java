@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +23,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -34,6 +37,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserAuthService {
 
+    @Value("${jwt.refreshToken.expiry.days}")
+    private int refreshTokenExpiryDays;
+
+    @Value("${jwt.accessToken.expiry.minutes}")
+    private int accessTokenExpiryMinutes;
+
     private final RefreshTokenRepository refreshTokenRepository;
 
     private final UserInfoRepository userInfoRepository;
@@ -45,7 +54,7 @@ public class UserAuthService {
 
     public AuthResponseDto getJwtTokensAfterAuthentication(Authentication authentication, HttpServletResponse response) {
         try {
-            var userInfoEntity = userInfoRepository.findByEmailId(authentication.getName())
+            UserInfoEntity userInfoEntity = userInfoRepository.findByEmailId(authentication.getName())
                     .orElseThrow(() -> {
                         log.error("AuthService :: userSignInAuth User: {} not found", authentication.getName());
                         return new ResponseStatusException(HttpStatus.NOT_FOUND, "USER NOT FOUND ");
@@ -61,7 +70,7 @@ public class UserAuthService {
             log.info("AuthService :: userSignInAuth Access token for user:{}, has been generated", userInfoEntity.getUserName());
             return AuthResponseDto.builder()
                     .accessToken(accessToken)
-                    .accessTokenExpiry(15 * 60)
+                    .accessTokenExpiry((int) ChronoUnit.SECONDS.between(Instant.now(), Instant.now().plus(accessTokenExpiryMinutes, ChronoUnit.MINUTES)))
                     .userName(userInfoEntity.getUserName())
                     .tokenType(TokenType.BEARER.getName())
                     .build();
@@ -86,7 +95,7 @@ public class UserAuthService {
         Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setSecure(true);
-        refreshTokenCookie.setMaxAge(15 * 24 * 60 * 60); // in seconds
+        refreshTokenCookie.setMaxAge((int) ChronoUnit.SECONDS.between(Instant.now(), Instant.now().plus(refreshTokenExpiryDays, ChronoUnit.DAYS)));
         response.addCookie(refreshTokenCookie);
     }
 
@@ -98,22 +107,22 @@ public class UserAuthService {
 
         final String refreshToken = authorizationHeader.substring(7);
 
-        //Find refreshToken from database and should not be revoked : Same thing can be done through filter.
-        var refreshTokenEntity = refreshTokenRepository.findByRefreshToken(refreshToken)
+        // Find refreshToken from database and should not be revoked : Same thing can be done through filter.
+        RefreshTokenEntity refreshTokenEntity = refreshTokenRepository.findByRefreshToken(refreshToken)
                 .filter(tokens -> !tokens.isRevoked())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Refresh token revoked"));
 
         UserInfoEntity userInfoEntity = refreshTokenEntity.getUser();
 
-        //Now create the Authentication object
+        // Now create the Authentication object
         Authentication authentication = createAuthenticationObject(userInfoEntity);
 
-        //Use the authentication object to generate new accessToken as the Authentication object that we will have may not contain correct role.
+        // Use the authentication object to generate new accessToken as the Authentication object that we will have may not contain correct role.
         String accessToken = jwtTokenGenerator.generateAccessToken(authentication);
 
         return AuthResponseDto.builder()
                 .accessToken(accessToken)
-                .accessTokenExpiry(5 * 60)
+                .accessTokenExpiry((int) ChronoUnit.SECONDS.between(Instant.now(), Instant.now().plus(accessTokenExpiryMinutes, ChronoUnit.MINUTES)))
                 .userName(userInfoEntity.getUserName())
                 .tokenType(TokenType.BEARER.getName())
                 .build();
@@ -159,7 +168,7 @@ public class UserAuthService {
             log.info("AuthService :: registerUser User:{} is successfully registered", savedUserDetails.getUserName());
             return AuthResponseDto.builder()
                     .accessToken(accessToken)
-                    .accessTokenExpiry(5 * 60)
+                    .accessTokenExpiry((int) Instant.now().plus(accessTokenExpiryMinutes, ChronoUnit.MINUTES).toEpochMilli())
                     .userName(savedUserDetails.getUserName())
                     .tokenType(TokenType.BEARER.getName())
                     .build();
