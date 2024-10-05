@@ -37,10 +37,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserAuthService {
 
-    @Value("${jwt.refreshToken.expiry.days}")
+    @Value("${jwt.refresh.token.expiry.days}")
     private int refreshTokenExpiryDays;
 
-    @Value("${jwt.accessToken.expiry.minutes}")
+    @Value("${jwt.access.token.expiry.minutes}")
     private int accessTokenExpiryMinutes;
 
     private final RefreshTokenRepository refreshTokenRepository;
