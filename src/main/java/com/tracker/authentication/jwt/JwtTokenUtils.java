@@ -3,7 +3,6 @@ package com.tracker.authentication.jwt;
 import com.tracker.authentication.user.UserInfo;
 import com.tracker.repository.UserInfoRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.jwt.Jwt;
