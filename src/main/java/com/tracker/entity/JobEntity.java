@@ -52,7 +52,7 @@ public class JobEntity extends BaseEntity {
     @Column(nullable = false)
     private String jobTitle;
 
-    @Column(name = "order", nullable = false)
+    @Column
     private Integer jobOrder;
 
     @Lob
