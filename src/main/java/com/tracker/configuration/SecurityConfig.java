@@ -12,14 +12,15 @@ import com.tracker.authentication.jwt.JwtTokenUtils;
 import com.tracker.authentication.jwt.RSAKeyRecord;
 import com.tracker.authentication.user.UserInfoService;
 import com.tracker.authentication.user.UserLogoutHandler;
-import com.tracker.constants.ApiEndPoint;
 import com.tracker.repository.RefreshTokenRepository;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -36,9 +37,11 @@ import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthen
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
-import java.util.List;
+import java.util.Arrays;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -48,7 +51,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
  */
 @Slf4j
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -63,99 +66,73 @@ public class SecurityConfig {
 
     private final UserInfoService userInfoService;
 
+    private static final Long MAX_AGE = 3600L;
+    private static final int CORS_FILTER_ORDER = -102;
 
+    private final String[] freeUrls = {
+            "/ping/**",
+            "/auth/**",
+            "/oauth2/**",
+            "/login/oauth2/**",
+            "/login"
+    };
+
+    @Order(0)
     @Bean
-    @Order(1)
-    public SecurityFilterChain signInSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
-                .securityMatcher(new AntPathRequestMatcher(ApiEndPoint.SecurePaths.SIGN_IN))
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/ping").permitAll()
-                        .anyRequest().authenticated()
-                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .httpBasic(withDefaults())
+                .authorizeHttpRequests(registry -> {
+                    registry.requestMatchers(freeUrls).permitAll();
+                    registry.anyRequest().authenticated();
+                })
                 .userDetailsService(userInfoService)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(ex -> ex.authenticationEntryPoint((request, response, authException) ->
-                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage())))
-                .httpBasic(withDefaults())
-                .build();
-    }
-
-
-    @Bean
-    @Order(2)
-    public SecurityFilterChain apiSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
-                .securityMatcher(new AntPathRequestMatcher(ApiEndPoint.SecurePaths.API))
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JwtAccessTokenFilter(rsaKeyRecord, jwtTokenUtils), UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(ex -> {
-                    log.error("SecurityConfig :: apiSecurityFilterChain Exception due to :{}", ex);
-                    ex.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint());
-                    ex.accessDeniedHandler(new BearerTokenAccessDeniedHandler());
-                })
-                .httpBasic(withDefaults())
-                .build();
-    }
-
-    @Bean
-    @Order(3)
-    public SecurityFilterChain refreshTokenSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
-                .securityMatcher(new AntPathRequestMatcher(ApiEndPoint.SecurePaths.REFRESH_TOKEN))
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JwtRefreshTokenFilter(rsaKeyRecord, jwtTokenUtils, refreshTokenRepository), UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(ex -> {
-                    log.error("SecurityConfig :: refreshTokenSecurityFilterChain Exception due to :{}", ex);
-                    ex.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint());
-                    ex.accessDeniedHandler(new BearerTokenAccessDeniedHandler());
-                })
-                .httpBasic(withDefaults())
-                .build();
-    }
-
-    @Bean
-    @Order(4)
-    public SecurityFilterChain logoutSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
-                .securityMatcher(new AntPathRequestMatcher(ApiEndPoint.SecurePaths.LOGOUT))
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(new JwtAccessTokenFilter(rsaKeyRecord, jwtTokenUtils), UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .addLogoutHandler(logoutHandlerService)
                         .logoutSuccessHandler(((request, response, authentication) -> SecurityContextHolder.clearContext()))
                 )
                 .exceptionHandling(ex -> {
-                    log.error("SecurityConfig :: logoutSecurityFilterChain Exception due to :{}", ex);
+                    log.error("SecurityConfig :: SecurityFilterChain Exception due to :{}", ex);
                     ex.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint());
                     ex.accessDeniedHandler(new BearerTokenAccessDeniedHandler());
-                })
-                .build();
+                });
+
+
+        return httpSecurity.build();
     }
 
     @Bean
-    @Order(5)
-    public SecurityFilterChain registerSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
-                .securityMatcher(new AntPathRequestMatcher(ApiEndPoint.SecurePaths.SIGN_UP))
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth ->
-                        auth.anyRequest().permitAll())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .build();
-    }
+    public FilterRegistrationBean<CorsFilter> corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("http://localhost:3000");
+        config.setAllowedHeaders(Arrays.asList(
+                HttpHeaders.AUTHORIZATION,
+                HttpHeaders.CONTENT_TYPE,
+                HttpHeaders.ACCEPT));
+        config.setAllowedMethods(Arrays.asList(
+                HttpMethod.GET.name(),
+                HttpMethod.POST.name(),
+                HttpMethod.PUT.name(),
+                HttpMethod.OPTIONS.name(),
+                HttpMethod.DELETE.name()));
+        config.setMaxAge(MAX_AGE);
+        config.addExposedHeader(HttpHeaders.AUTHORIZATION);
+
+        source.registerCorsConfiguration("/**", config);
+        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
+
+        bean.setOrder(CORS_FILTER_ORDER);
+        return bean;
+    }
 
     @Bean
     PasswordEncoder passwordEncoder() {

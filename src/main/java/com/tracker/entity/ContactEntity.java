@@ -16,27 +16,45 @@ import lombok.Setter;
 
 /**
  * @author by Raj Aryan,
- * created on 27/09/2024
+ * created on 02/10/2024
  */
+
+@Entity
 @Getter
 @Setter
-@Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "refresh_token")
-public class RefreshTokenEntity {
+@Table(name = "contacts")
+public class ContactEntity extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "refresh_token", nullable = false, length = 10000)
-    private String refreshToken;
-
-    @Column(name = "revoked")
-    private boolean revoked;
+    private Long contactId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private UserInfoEntity user;
+
+    @ManyToOne
+    @JoinColumn(name = "job_id")
+    private JobEntity job;
+
+    @Column(nullable = false)
+    private String contactName;
+
+    @Column
+    private String company;
+
+    @Column(length = 100)
+    private String position;
+
+    @Column(length = 100)
+    private String email;
+
+    @Column(length = 20)
+    private String phoneNumber;
+
+    @Column
+    private String linkedinUrl;
 }

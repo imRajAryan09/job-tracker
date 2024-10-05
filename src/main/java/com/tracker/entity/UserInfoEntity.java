@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * @author by Raj Aryan,
@@ -25,19 +26,17 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "user_info")
-public class UserInfoEntity implements Serializable {
+public class UserInfoEntity extends BaseEntity implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "user_id")
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID userId;
 
-    @Column(name = "user_name")
+    @Column(name = "user_name", nullable = false)
     private String userName;
 
     @Column(nullable = false, name = "email_id", unique = true)
     private String emailId;
-
-    @Column(name = "mobile_number")
-    private String mobileNumber;
 
     @Column(nullable = false, name = "roles")
     private String roles;

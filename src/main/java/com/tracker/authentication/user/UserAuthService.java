@@ -184,7 +184,6 @@ public class UserAuthService {
         UserInfoEntity userInfoEntity = new UserInfoEntity();
         userInfoEntity.setUserName(userRegistrationDto.userName());
         userInfoEntity.setEmailId(userRegistrationDto.userEmail());
-        userInfoEntity.setMobileNumber(userRegistrationDto.mobileNumber());
         userInfoEntity.setRoles(userRegistrationDto.userRole());
         userInfoEntity.setPassword(passwordEncoder.encode(userRegistrationDto.userPassword()));
         return userInfoEntity;

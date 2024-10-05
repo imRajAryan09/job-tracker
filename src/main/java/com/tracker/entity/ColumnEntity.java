@@ -1,5 +1,6 @@
 package com.tracker.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,29 +16,37 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author by Raj Aryan,
- * created on 27/09/2024
+ * created on 02/10/2024
  */
+@Entity
 @Getter
 @Setter
-@Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "refresh_token")
-public class RefreshTokenEntity {
+@Table(name = "columns")
+public class ColumnEntity extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "refresh_token", nullable = false, length = 10000)
-    private String refreshToken;
-
-    @Column(name = "revoked")
-    private boolean revoked;
+    private Long columnId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
-    private UserInfoEntity user;
+    @JoinColumn(name = "board_id", nullable = false)
+    private BoardEntity board;
+
+    @Column(nullable = false, length = 100)
+    private String columnName;
+
+    @Column(nullable = false)
+    private Integer columnOrder;
+
+    @OneToMany(mappedBy = "column", cascade = CascadeType.ALL)
+    private List<JobEntity> jobs = new ArrayList<>();
+
 }
