@@ -21,7 +21,7 @@ import java.time.LocalDate;
 @MappedSuperclass
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class BaseEntity {
+public abstract class TimeStampedEntity {
 
     @CreatedDate
     private LocalDate createdDate;

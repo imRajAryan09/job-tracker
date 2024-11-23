@@ -18,7 +18,7 @@ import java.util.concurrent.Executor;
 @Slf4j
 @Configuration
 @EnableAsync(proxyTargetClass = true)
-public class AsyncConfiguration implements AsyncConfigurer {
+public class AsyncConfig implements AsyncConfigurer {
 
     @Value("${async.executor.core.pool.size:5}")
     private int aeCorePoolSize;

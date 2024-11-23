@@ -10,6 +10,7 @@ import com.tracker.authentication.filter.JwtAccessTokenFilter;
 import com.tracker.authentication.filter.JwtRefreshTokenFilter;
 import com.tracker.authentication.jwt.JwtTokenUtils;
 import com.tracker.authentication.jwt.RSAKeyRecord;
+import com.tracker.authentication.user.OAuth2LoginSuccessHandler;
 import com.tracker.authentication.user.UserInfoService;
 import com.tracker.authentication.user.UserLogoutHandler;
 import com.tracker.repository.RefreshTokenRepository;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -70,6 +72,9 @@ public class SecurityConfig {
 
     private static final int CORS_FILTER_ORDER = -102;
 
+    @Lazy
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+
     private final String[] freeUrls = {
             "/ping/**",
             "/auth/**",
@@ -91,6 +96,7 @@ public class SecurityConfig {
                 })
                 .userDetailsService(userInfoService)
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
+                .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2LoginSuccessHandler))
                 .addFilterBefore(new JwtAccessTokenFilter(rsaKeyRecord, jwtTokenUtils), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtRefreshTokenFilter(rsaKeyRecord, jwtTokenUtils, refreshTokenRepository), UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> logout

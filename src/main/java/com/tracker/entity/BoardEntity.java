@@ -31,7 +31,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "boards")
-public class BoardEntity extends BaseEntity {
+public class BoardEntity extends TimeStampedEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID boardId;

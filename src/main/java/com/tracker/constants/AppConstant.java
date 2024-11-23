@@ -35,4 +35,11 @@ public class AppConstant {
         public static final String SCOPE = "scope";
         public static final String REFRESH_TOKEN = "REFRESH_TOKEN";
     }
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Email {
+        public static final String FROM_EMAIL = "rjsbff786@gmail.com";
+        public static final String password = "iwea amrv pfxe ivil";
+
+    }
 }

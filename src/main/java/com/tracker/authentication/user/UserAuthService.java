@@ -4,7 +4,9 @@ import com.tracker.authentication.jwt.JwtTokenGenerator;
 import com.tracker.dto.request.UserRegistrationDto;
 import com.tracker.dto.response.AuthResponseDto;
 import com.tracker.entity.RefreshTokenEntity;
+import com.tracker.entity.RoleEntity;
 import com.tracker.entity.UserInfoEntity;
+import com.tracker.enums.Role;
 import com.tracker.enums.TokenType;
 import com.tracker.repository.RefreshTokenRepository;
 import com.tracker.repository.UserInfoRepository;
@@ -18,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,6 +28,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -50,8 +54,7 @@ public class UserAuthService {
 
     private final PasswordEncoder passwordEncoder;
 
-
-    public AuthResponseDto getJwtTokensAfterAuthentication(Authentication authentication, HttpServletResponse response) {
+    public AuthResponseDto getJwtTokensPostAuthentication(Authentication authentication, HttpServletResponse response) {
         try {
             UserInfoEntity userInfoEntity = userInfoRepository.findByEmailId(authentication.getName())
                     .orElseThrow(() -> {
@@ -127,19 +130,15 @@ public class UserAuthService {
                 .build();
     }
 
-    private static Authentication createAuthenticationObject(UserInfoEntity userInfoEntity) {
+    public static Authentication createAuthenticationObject(UserInfoEntity userInfoEntity) {
         // Extract user details from UserDetailsEntity
         String username = userInfoEntity.getEmailId();
         String password = userInfoEntity.getPassword();
-        String roles = userInfoEntity.getRoles();
+        RoleEntity role = userInfoEntity.getRole();
 
-        // Extract authorities from roles (comma-separated)
-        String[] roleArray = roles.split(",");
-        GrantedAuthority[] authorities = Arrays.stream(roleArray)
-                .map(role -> (GrantedAuthority) role::trim)
-                .toArray(GrantedAuthority[]::new);
-
-        return new UsernamePasswordAuthenticationToken(username, password, Arrays.asList(authorities));
+        // Create authorities
+        GrantedAuthority authority = new SimpleGrantedAuthority(role.getRoleName().name());
+        return new UsernamePasswordAuthenticationToken(username, password, List.of(authority));
     }
 
     public AuthResponseDto registerUser(UserRegistrationDto userRegistrationDto, HttpServletResponse httpServletResponse) {
@@ -179,12 +178,14 @@ public class UserAuthService {
         }
     }
 
-    // TODO : use object mapper
     private UserInfoEntity convertToEntity(UserRegistrationDto userRegistrationDto) {
         UserInfoEntity userInfoEntity = new UserInfoEntity();
         userInfoEntity.setUserName(userRegistrationDto.userName());
         userInfoEntity.setEmailId(userRegistrationDto.userEmail());
-        userInfoEntity.setRoles(userRegistrationDto.userRole());
+        userInfoEntity.setRole(RoleEntity.builder()
+                .roleName(Role.valueOf(userRegistrationDto.userRole()))
+                .build()
+        );
         userInfoEntity.setPassword(passwordEncoder.encode(userRegistrationDto.userPassword()));
         return userInfoEntity;
     }

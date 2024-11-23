@@ -28,7 +28,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "documents")
-public class DocumentEntity extends BaseEntity {
+public class DocumentEntity extends TimeStampedEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

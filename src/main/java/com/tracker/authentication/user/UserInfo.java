@@ -24,7 +24,7 @@ public class UserInfo implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Arrays
                 .stream(userInfoEntity
-                        .getRoles()
+                        .getRole().getRoleName().toString()
                         .split(","))
                 .map(SimpleGrantedAuthority::new)
                 .toList();

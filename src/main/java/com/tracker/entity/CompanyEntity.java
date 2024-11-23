@@ -29,7 +29,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "companies")
-public class CompanyEntity extends BaseEntity {
+public class CompanyEntity extends TimeStampedEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

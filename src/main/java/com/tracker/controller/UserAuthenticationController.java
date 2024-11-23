@@ -37,7 +37,7 @@ public class UserAuthenticationController {
 
     @PostMapping(ApiEndPoint.Authentication.SIGN_IN)
     public SuccessResponse<AuthResponseDto> authenticateUser(Authentication authentication, HttpServletResponse response) {
-        return new SuccessResponse<>(userAuthService.getJwtTokensAfterAuthentication(authentication, response));
+        return new SuccessResponse<>(userAuthService.getJwtTokensPostAuthentication(authentication, response));
     }
 
     @PreAuthorize("hasAuthority('SCOPE_REFRESH_TOKEN')")

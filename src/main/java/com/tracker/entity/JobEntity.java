@@ -32,7 +32,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "jobs")
-public class JobEntity extends BaseEntity {
+public class JobEntity extends TimeStampedEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID jobId;
