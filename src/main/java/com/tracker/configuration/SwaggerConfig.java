@@ -15,8 +15,14 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI openAPI() {
-        return new OpenAPI().info(new Info().title("Job Tracker")
+        return new OpenAPI().info(
+                new Info().
+                title("Job Tracker")
                         .description("Easy way to track your Job Applications")
-                        .contact(new Contact().name("Raj Aryan").email("imRajAryan09@gmail.com")));
+                        .contact(new Contact()
+                                .name("Raj Aryan")
+                                .email("imrajaryan09@gmail.com")
+                        )
+        );
     }
 }

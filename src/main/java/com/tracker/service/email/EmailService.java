@@ -28,9 +28,11 @@ public abstract class EmailService implements IEmailService {
     public void sendEmail(EmailTemplate emailTemplate) {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage,
+            MimeMessageHelper helper = new MimeMessageHelper(
+                    mimeMessage,
                     MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
-                    StandardCharsets.UTF_8.name());
+                    StandardCharsets.UTF_8.name()
+            );
 
             String html = templateEngine.process(emailTemplate.getTemplateName(), emailTemplate.getContext());
             helper.setTo(emailTemplate.getTo());
