@@ -34,3 +34,6 @@ build/
 job-tracker-oauth.json
 
 /src/main/resources/certs
+
+### Secrets ###
+/src/main/resources/application.yml
