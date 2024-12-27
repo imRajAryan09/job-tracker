@@ -10,7 +10,7 @@ import com.tracker.authentication.filter.JwtAccessTokenFilter;
 import com.tracker.authentication.filter.JwtRefreshTokenFilter;
 import com.tracker.authentication.jwt.JwtTokenUtils;
 import com.tracker.authentication.jwt.RSAKeyRecord;
-import com.tracker.authentication.user.OAuth2LoginSuccessHandler;
+import com.tracker.authentication.user.oauth2.OAuth2LoginSuccessHandler;
 import com.tracker.authentication.user.UserInfoService;
 import com.tracker.authentication.user.UserLogoutHandler;
 import com.tracker.repository.RefreshTokenRepository;

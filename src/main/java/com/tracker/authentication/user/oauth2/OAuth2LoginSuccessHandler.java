@@ -1,16 +1,16 @@
-package com.tracker.authentication.user;
+package com.tracker.authentication.user.oauth2;
 
 import com.tracker.authentication.jwt.JwtTokenGenerator;
+import com.tracker.authentication.user.UserAuthService;
+import com.tracker.authentication.user.UserInfoService;
 import com.tracker.entity.RoleEntity;
 import com.tracker.entity.UserInfoEntity;
-import com.tracker.enums.Provider;
 import com.tracker.enums.Role;
 import com.tracker.exception.OAuth2AuthenticationProcessingException;
 import com.tracker.repository.RoleRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
@@ -28,8 +28,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author by Raj Aryan,

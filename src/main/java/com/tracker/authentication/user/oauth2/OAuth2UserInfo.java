@@ -1,4 +1,4 @@
-package com.tracker.authentication.user;
+package com.tracker.authentication.user.oauth2;
 
 import com.tracker.enums.Provider;
 import lombok.Getter;
