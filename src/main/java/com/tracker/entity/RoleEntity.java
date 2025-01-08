@@ -19,6 +19,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,6 +33,8 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
+@DynamicUpdate
+@DynamicInsert
 @Table(name = "role")
 @NoArgsConstructor
 @AllArgsConstructor
